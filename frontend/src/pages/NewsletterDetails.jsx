@@ -10,7 +10,7 @@ const NewsletterDetails = () => {
     useEffect(() => {
         const fetchDetails = async () => {
             try {
-                const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/${id}`);
+                const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/newsletters/${id}`);
                 setNewsletter(data);
             } catch (err) {
                 setError("Newsletter not found");
@@ -28,7 +28,7 @@ const NewsletterDetails = () => {
         <div className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg">
             {/* Banner Image */}
             <img 
-                src={`http://localhost:4000/${newsletter.banner}`} 
+                src={`${import.meta.env.VITE_API_URL}/${newsletter.banner}`} 
                 alt={newsletter.name} 
                 className="w-full h-64 object-cover rounded-lg shadow-md" 
             />
@@ -38,7 +38,7 @@ const NewsletterDetails = () => {
                 <div className="mt-4">
                     <h3 className="text-lg font-semibold">Event Poster</h3>
                     <img 
-                        src={`http://localhost:4000/${newsletter.poster}`} 
+                        src={`${import.meta.env.VITE_API_URL}/${newsletter.poster}`} 
                         alt="Event Poster" 
                         className="w-full h-60 object-cover rounded-lg shadow-md" 
                     />

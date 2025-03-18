@@ -3,9 +3,6 @@ const Newsletter = require("../models/Newsletter");
 // Create Newsletter
 const createNewsletter = async (req, res) => {
     try {
-        console.log(req.files); // Debugging: Check if files are received
-        console.log(req.body);  // Debugging: Check form data
-
         const { name, description, eventDuration, prizeMoney, registrationLink, capacity, contactInfo, type } =
             req.body;
 

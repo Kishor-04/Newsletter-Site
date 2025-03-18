@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createNewsletter } from "../api/api";
+import axios from "axios";
 
 const AdminForm = () => {
     const [formData, setFormData] = useState({
@@ -29,7 +29,9 @@ const AdminForm = () => {
         Object.keys(formData).forEach((key) => form.append(key, formData[key]));
 
         try {
-            await createNewsletter(form);
+            await await axios.post(`${import.meta.env.VITE_API_URL}/create`, formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
             alert("Newsletter created successfully!");
         } catch (error) {
             console.error("Error:", error);

@@ -12,7 +12,7 @@ router.post(
 );
 
 // Fetch All Newsletters
-router.get("/", getAllNewsletters);
-router.get("/:id", getAllNewslettersById);
+router.get("/newsletters", getAllNewsletters);
+router.get("/newsletters/:id", getAllNewslettersById);
 
 module.exports = router;

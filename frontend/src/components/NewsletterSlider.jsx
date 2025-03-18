@@ -1,9 +1,9 @@
 import { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-import { fetchNewsletters } from "../api/api";
 import { Slide } from "react-slideshow-image";
 import "react-slideshow-image/dist/styles.css";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import axios from "axios";
 
 const NewsletterSlider = () => {
     const [newsletters, setNewsletters] = useState([]);
@@ -12,7 +12,9 @@ const NewsletterSlider = () => {
 
     useEffect(() => {
         const getData = async () => {
-            const { data } = await fetchNewsletters();
+            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/newsletters`);
+            
+
             setNewsletters(data);
         };
         getData();
@@ -32,7 +34,7 @@ const NewsletterSlider = () => {
 
     // Navigate to the details page when an image is clicked
     const handleSelect = (newsId) => {
-        navigate(`/${newsId}`); // Navigate to the details page
+        navigate(`/newsletters/${newsId}`); // Navigate to the details page
     };
 
     return (
@@ -49,7 +51,7 @@ const NewsletterSlider = () => {
                         {newsletters.map((news) => (
                             <div key={news._id} className="each-slide flex justify-center">
                                 <img
-                                    src={`http://localhost:4000/${news.banner}`}
+                                    src={`${import.meta.env.VITE_API_URL}/${news.banner}`}
                                     alt={news.name}
                                     className="w-full h-60 object-cover rounded shadow-lg cursor-pointer"
                                     onClick={() => handleSelect(news._id)}
