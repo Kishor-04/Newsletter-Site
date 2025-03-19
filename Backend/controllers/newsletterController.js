@@ -1,4 +1,13 @@
 const Newsletter = require("../models/Newsletter");
+const path = require("path");
+const fs = require("fs");
+
+// Helper function to delete a file
+const deleteFile = (filePath) => {
+    if (filePath && fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+    }
+};
 
 // Create Newsletter
 const createNewsletter = async (req, res) => {
@@ -61,8 +70,12 @@ const getAllNewslettersById = async (req, res) => {
 const editNewsletter = async (req, res) => {
     const { id } = req.params;
     try {
-        const { name, description, eventDuration, prizeMoney, registrationLink, capacity, contactInfo, type } =
-            req.body;
+        const { name, description, eventDuration, prizeMoney, registrationLink, capacity, contactInfo, type } = req.body;
+
+        const newsletter = await Newsletter.findById(id);
+        if (!newsletter) {
+            return res.status(404).json({ message: "Newsletter not found" });
+        }
 
         const updatedFields = {
             name,
@@ -75,36 +88,42 @@ const editNewsletter = async (req, res) => {
             type,
         };
 
+        // Handle image replacement
         if (req.files["banner"]) {
+            deleteFile(newsletter.banner); // Delete old banner
             updatedFields.banner = req.files["banner"][0].path;
         }
         if (req.files["poster"]) {
+            deleteFile(newsletter.poster); // Delete old poster
             updatedFields.poster = req.files["poster"][0].path;
         }
 
-        const newsletter = await Newsletter.findByIdAndUpdate(id, updatedFields, { new: true });
+        const updatedNewsletter = await Newsletter.findByIdAndUpdate(id, updatedFields, { new: true });
 
-        if (!newsletter) {
-            return res.status(404).json({ message: "Newsletter not found" });
-        }
-
-        res.json({ message: "Newsletter updated successfully", newsletter });
+        res.json({ message: "Newsletter updated successfully", updatedNewsletter });
     } catch (error) {
         console.error("Error updating newsletter:", error);
         res.status(500).json({ message: "Server error", error });
     }
 };
 
+
 // Delete Newsletter
 const deleteNewsletter = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const newsletter = await Newsletter.findByIdAndDelete(id);
+        const newsletter = await Newsletter.findById(id);
 
         if (!newsletter) {
             return res.status(404).json({ message: "Newsletter not found" });
         }
+
+        // Delete images from the uploads folder
+        deleteFile(newsletter.banner);
+        deleteFile(newsletter.poster);
+
+        await Newsletter.findByIdAndDelete(id);
 
         res.json({ message: "Newsletter deleted successfully" });
     } catch (error) {
@@ -112,6 +131,7 @@ const deleteNewsletter = async (req, res) => {
         res.status(500).json({ message: "Server error", error });
     }
 };
+
 
 module.exports = {
     createNewsletter,

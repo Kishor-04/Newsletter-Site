@@ -52,15 +52,19 @@ const NewsletterDetails = () => {
 
                 {/* Additional Details */}
                 <div className="mt-4 space-y-2">
-                    <p><strong>🕒 Event Duration:</strong> {newsletter.eventDuration}</p>
-                    <p><strong>💰 Prize Money:</strong> ₹{newsletter.prizeMoney}</p>
-                    <p><strong>👥 Capacity:</strong> {newsletter.capacity} people</p>
+                    <p><strong>🕒 Event Date:</strong> {newsletter.eventDuration}</p>
                     <p><strong>📞 Contact Info:</strong> {newsletter.contactInfo}</p>
-                    <p><strong>📌 Type:</strong> {newsletter.type}</p>
+                    {/* Show these fields only if the type is NOT "Event" */}
+                    {newsletter.type !== "event" && (
+                        <>
+                            <p><strong>💰 Regsitration Fees:</strong> ₹{newsletter.prizeMoney}</p>
+                            <p><strong>👥 Capacity:</strong> {newsletter.capacity} people</p>
+                        </>
+                    )}
                 </div>
 
-                {/* Registration Button */}
-                {newsletter.registrationLink && (
+                {/* Registration Button (Only if type is NOT "Event") */}
+                {newsletter.type !== "event" && newsletter.registrationLink && (
                     <div className="mt-6">
                         <a 
                             href={newsletter.registrationLink} 

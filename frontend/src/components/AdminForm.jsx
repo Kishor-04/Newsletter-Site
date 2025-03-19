@@ -226,6 +226,7 @@ const AdminForm = () => {
                         name="eventDuration"
                         value={formData.eventDuration}
                         onChange={handleChange}
+                        min={new Date().toISOString().split("T")[0]} // Ensures only future dates are selectable
                         required
                         className="w-1/2 border p-3 rounded-lg"
                     />
