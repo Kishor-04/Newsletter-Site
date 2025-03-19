@@ -1,13 +1,11 @@
-import { useState } from "react";
+import { useState ,useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { useEffect } from "react";
 
 const AdminForm = () => {
     const location = useLocation();
     const isEditing = location.state?.isEditing || false;
     const navigate = useNavigate();
-
     const { _id } = location.state || {}; // ✅ Get `_id` and `isEditing`
 
     // Initialize state with default values or pre-filled data for editing
@@ -26,6 +24,8 @@ const AdminForm = () => {
 
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState({});
+    const [bannerPreview, setBannerPreview] = useState(null);
+    const [posterPreview, setPosterPreview] = useState(null);
 
     // Ensure the form gets updated when editing
     useEffect(() => {
@@ -58,6 +58,10 @@ const AdminForm = () => {
                         });
     
                         console.log("Updated formData after setting:", formData); // ❌ Might not update immediately
+
+                        // Set preview images from fetched data
+                        setBannerPreview(`${import.meta.env.VITE_API_URL}/${res.data.banner}`);
+                        setPosterPreview(`${import.meta.env.VITE_API_URL}/${res.data.poster}`);
                     } else {
                         setErrors({ form: "No event details found." });
                     }
@@ -82,12 +86,23 @@ const AdminForm = () => {
 
     // Handle file input changes
     const handleFileChange = (e) => {
+        const { name } = e.target;
         const file = e.target.files[0];
+
         if (file && file.size > 10 * 1024 * 1024) {
-            setErrors((prev) => ({ ...prev, [e.target.name]: "File size must be less than 10MB" }));
+            setErrors((prev) => ({ ...prev, [name]: "File size must be less than 10MB" }));
         } else {
-            setErrors((prev) => ({ ...prev, [e.target.name]: "" }));
-            setFormData({ ...formData, [e.target.name]: file });
+            setErrors((prev) => ({ ...prev, [name]: "" }));
+            setFormData((prev) => ({ ...prev, [name]: file }));
+
+            const fileUrl = URL.createObjectURL(file);
+            if (name === "banner") {
+                setBannerPreview(fileUrl);
+                localStorage.setItem("bannerPreview", fileUrl);
+            } else if (name === "poster") {
+                setPosterPreview(fileUrl);
+                localStorage.setItem("posterPreview", fileUrl);
+            }
         }
     };
 
@@ -174,12 +189,14 @@ const AdminForm = () => {
                     onChange={handleFileChange}
                     className="w-full border p-2 rounded-lg"
                 />
-                {formData.banner && (
-                    <img src={`${import.meta.env.VITE_API_URL}/${formData.banner}`}
-                        alt="Current Banner"
+                {bannerPreview && (
+                    <img
+                        src={bannerPreview}
+                        alt="Banner Preview"
                         className="mt-2 w-40 h-20 object-cover rounded"
                     />
                 )}
+        
 
                 <label className="block text-gray-700 font-semibold">Poster:</label>
                 <input
@@ -188,12 +205,14 @@ const AdminForm = () => {
                     onChange={handleFileChange}
                     className="w-full border p-2 rounded-lg"
                 />
-                {formData.poster && (
-                    <img src={`${import.meta.env.VITE_API_URL}/${formData.poster}`}
-                        alt="Current Poster"
+                {posterPreview && (
+                    <img
+                        src={posterPreview}
+                        alt="Poster Preview"
                         className="mt-2 w-40 h-20 object-cover rounded"
                     />
                 )}
+    
 
 
                 {/* Name & Description */}
