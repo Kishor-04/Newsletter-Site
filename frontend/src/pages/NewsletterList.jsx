@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 
 const NewsletterList = () => {
     const [newsletters, setNewsletters] = useState([]);
@@ -34,7 +34,8 @@ const NewsletterList = () => {
 
     return (
         <div className="container mx-auto p-6">
-            <h2 className="text-2xl font-bold mb-4">Newsletters</h2>
+            <button className="bg-blue-400 p-5 mb-3 rounded-full text-white"><Link to="/admin">Add Newsletter</Link></button>
+            <h2 className="text-2xl font-bold mb-4 ">Newsletters</h2>
             <table className="min-w-full bg-white border rounded-lg">
                 <thead>
                     <tr className="bg-gray-200">
@@ -52,7 +53,7 @@ const NewsletterList = () => {
                                 <button
                                     className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-700"
                                     onClick={() => navigate("/admin", { state: { _id: newsletter._id, isEditing: true } })
-                                }
+                                    }
                                 >
                                     Edit
                                 </button>
